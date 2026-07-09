@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SplashView: View {
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
+
     // Estado da splash.
     @State private var isLoading = true
     @State private var animateContent = false
@@ -66,11 +68,11 @@ struct SplashView: View {
                     .shadow(color: Color.black.opacity(0.14), radius: 28, x: 0, y: 18)
 
                 VStack(spacing: 8) {
-                    Text("Centro Médico Famor")
+                    Text(t("Centro Médico Famor"))
                         .font(.system(size: 29, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 0.05, green: 0.24, blue: 0.25))
 
-                    Text("Cuidando da sua saúde")
+                    Text(t("Cuidando da sua saúde"))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
                 }
@@ -79,7 +81,7 @@ struct SplashView: View {
                     ProgressView()
                         .tint(Color.teal)
 
-                    Text("A carregar")
+                    Text(t("A carregar"))
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -111,6 +113,10 @@ struct SplashView: View {
     // Se o login falhar, voltamos a mostrar a splash.
     private func reiniciarSplash() {
         iniciarSplash()
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

@@ -13,6 +13,7 @@ enum ApiConstants {
     static let tokenKey = "token"
     static let roleKey = "role"
     static let perfilKey = "perfil"
+    static let languageKey = "appLanguage"
 
     // Monta o token no formato que a API normalmente pede.
     static func bearerToken(_ token: String) -> String {

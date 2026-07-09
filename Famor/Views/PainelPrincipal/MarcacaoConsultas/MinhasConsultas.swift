@@ -11,6 +11,7 @@ import SwiftData
 // Tela que lista as consultas do paciente.
 struct MinhasConsultas: View {
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
     @Query(sort: \UsuarioModel.dataLogin, order: .reverse) private var usuarios: [UsuarioModel]
 
     // Dados e estados usados pela lista.
@@ -73,7 +74,7 @@ struct MinhasConsultas: View {
     // Título da tela e botão de actualizar.
     private var tituloArea: some View {
         HStack(alignment: .center, spacing: 16) {
-            Text("Minhas Consultas")
+            Text(t("Minhas Consultas"))
                 .font(.system(size: 26, weight: .bold, design: .rounded))
                 .foregroundStyle(TemaStyles.titleColor)
                 .fixedSize(horizontal: false, vertical: true)
@@ -107,7 +108,7 @@ struct MinhasConsultas: View {
     private var filtroArea: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Filtrar por estado")
+                Text(t("Filtrar por estado"))
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(Color(red: 0.39, green: 0.45, blue: 0.54))
 
@@ -119,7 +120,7 @@ struct MinhasConsultas: View {
                             filtroSelecionado = .todas
                         }
                     } label: {
-                        Text("Limpar")
+                        Text(t("Limpar"))
                             .font(.caption.weight(.bold))
                             .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
                     }
@@ -149,7 +150,7 @@ struct MinhasConsultas: View {
             }
         } label: {
             HStack(spacing: 8) {
-                Text(filtro.titulo)
+                Text(t(filtro.titulo))
                     .lineLimit(1)
 
                 Text("\(quantidade)")
@@ -211,7 +212,7 @@ struct MinhasConsultas: View {
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
 
-            Text("A mostrar consultas guardadas no telemovel.")
+            Text(t("A mostrar consultas guardadas no telemovel."))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color(red: 0.39, green: 0.45, blue: 0.54))
                 .fixedSize(horizontal: false, vertical: true)
@@ -232,7 +233,7 @@ struct MinhasConsultas: View {
             ProgressView()
                 .tint(Color(red: 0.00, green: 0.67, blue: 0.67))
 
-            Text("A carregar consultas...")
+            Text(t("A carregar consultas..."))
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.secondary)
         }
@@ -264,7 +265,7 @@ struct MinhasConsultas: View {
                     await carregarDados()
                 }
             } label: {
-                Text("Tentar novamente")
+                Text(t("Tentar novamente"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -290,11 +291,11 @@ struct MinhasConsultas: View {
                 .background(Color(red: 0.88, green: 0.98, blue: 0.97))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            Text("Nenhuma consulta encontrada")
+            Text(t("Nenhuma consulta encontrada"))
                 .font(.headline.weight(.bold))
                 .foregroundStyle(TemaStyles.titleColor)
 
-            Text("Quando houver consultas neste filtro, elas aparecem aqui.")
+            Text(t("Quando houver consultas neste filtro, elas aparecem aqui."))
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -353,7 +354,7 @@ struct MinhasConsultas: View {
             HStack {
                 Button {
                 } label: {
-                    Label("Editar", systemImage: "square.and.pencil")
+                    Label(t("Editar"), systemImage: "square.and.pencil")
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
                         .lineLimit(1)
@@ -364,7 +365,7 @@ struct MinhasConsultas: View {
 
                 Button {
                 } label: {
-                    Label("Cancelar consulta", systemImage: "xmark")
+                    Label(t("Cancelar consulta"), systemImage: "xmark")
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(Color(red: 0.90, green: 0.28, blue: 0.40))
                         .lineLimit(1)
@@ -410,7 +411,7 @@ struct MinhasConsultas: View {
                 .frame(width: 36)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Codigo de Confirmacao")
+                Text(t("Codigo de Confirmacao"))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color(red: 0.53, green: 0.60, blue: 0.69))
 
@@ -633,6 +634,10 @@ struct MinhasConsultas: View {
             .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "pt_AO"))
             .lowercased()
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

@@ -10,7 +10,7 @@ import Foundation
 // Aqui ficam os caminhos da API.
 enum Endpoints {
     // Endereco base da API na rede local.
-    static let baseURL = "http://172.20.10.2:3000/api"
+    static let baseURL = "http://192.168.1.188:3000/api"
 
     // Caminho usado para fazer login.
     static let login = "\(baseURL)/login"

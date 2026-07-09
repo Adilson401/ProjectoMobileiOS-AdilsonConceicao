@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RecuperarSenha: View {
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
+
     // Campos que podem receber foco na modal.
     private enum CampoRedefinir: Hashable {
         case codigo
@@ -119,12 +121,12 @@ struct RecuperarSenha: View {
     private var redefinirCard: some View {
         VStack(spacing: 24) {
             VStack(spacing: 10) {
-                Text("Definir nova senha")
+                Text(t("Definir nova senha"))
                     .font(.system(size: TemaStyles.titleSize, weight: .bold, design: .rounded))
                     .foregroundStyle(TemaStyles.titleColor)
                     .multilineTextAlignment(.center)
 
-                Text("Coloca o codigo recebido no e-mail e define a tua nova senha.")
+                Text(t("Coloca o codigo recebido no e-mail e define a tua nova senha."))
                     .font(.body.weight(.medium))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -134,7 +136,7 @@ struct RecuperarSenha: View {
 
             VStack(alignment: .leading, spacing: TemaStyles.formSpacing) {
                 redefinirTextField(
-                    placeholder: "Codigo de confirmacao",
+                    placeholder: t("Codigo de confirmacao"),
                     systemImage: "number",
                     text: $codigo,
                     focus: .codigo,
@@ -144,7 +146,7 @@ struct RecuperarSenha: View {
                 }
 
                 redefinirPasswordField(
-                    placeholder: "Nova senha",
+                    placeholder: t("Nova senha"),
                     systemImage: "lock",
                     text: $novaSenha,
                     isVisible: $mostrarNovaSenha,
@@ -155,7 +157,7 @@ struct RecuperarSenha: View {
                 }
 
                 redefinirPasswordField(
-                    placeholder: "Confirmar nova senha",
+                    placeholder: t("Confirmar nova senha"),
                     systemImage: "lock.fill",
                     text: $confirmarNovaSenha,
                     isVisible: $mostrarConfirmarNovaSenha,
@@ -196,7 +198,7 @@ struct RecuperarSenha: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "arrow.left")
-                Text("Voltar")
+                Text(t("Voltar"))
             }
             .font(.footnote.weight(.semibold))
             .foregroundStyle(TemaStyles.primaryColor)
@@ -207,12 +209,12 @@ struct RecuperarSenha: View {
     // Titulo e descricao da tela.
     private var headerTexts: some View {
         VStack(spacing: 10) {
-            Text("Recuperar senha")
+            Text(t("Recuperar senha"))
                 .font(.system(size: TemaStyles.titleSize, weight: .bold, design: .rounded))
                 .foregroundStyle(TemaStyles.titleColor)
                 .multilineTextAlignment(.center)
 
-            Text("Informe seu e-mail para receber o codigo de recuperacao.")
+            Text(t("Informe seu e-mail para receber o codigo de recuperacao."))
                 .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -240,7 +242,7 @@ struct RecuperarSenha: View {
     private var emailField: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("E-mail")
+                Text(t("E-mail"))
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(TemaStyles.titleColor.opacity(0.72))
 
@@ -257,7 +259,7 @@ struct RecuperarSenha: View {
                     .foregroundStyle(emailAtivo ? TemaStyles.primaryColor : .secondary)
                     .frame(width: 22)
 
-                TextField("Digite seu e-mail", text: $email)
+                TextField(t("Digite seu e-mail"), text: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -282,7 +284,7 @@ struct RecuperarSenha: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Recuperar")
+                    Text(t("Recuperar"))
                     Image(systemName: "arrow.right")
                 }
             }
@@ -298,7 +300,7 @@ struct RecuperarSenha: View {
         Button {
             onBack?()
         } label: {
-            Text("Cancelar")
+            Text(t("Cancelar"))
                 .secondaryButtonSurface()
         }
         .buttonStyle(.plain)
@@ -315,7 +317,7 @@ struct RecuperarSenha: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Atualizar senha")
+                    Text(t("Atualizar senha"))
                 }
             }
             .primaryButtonSurface()
@@ -330,7 +332,7 @@ struct RecuperarSenha: View {
         Button {
             fecharModalRedefinir()
         } label: {
-            Text("Cancelar")
+            Text(t("Cancelar"))
                 .secondaryButtonSurface()
         }
         .buttonStyle(.plain)
@@ -518,6 +520,12 @@ struct RecuperarSenha: View {
         withAnimation(.easeInOut(duration: 0.25)) {
             mostrarModalRedefinir = false
         }
+    }
+}
+
+private extension RecuperarSenha {
+    func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

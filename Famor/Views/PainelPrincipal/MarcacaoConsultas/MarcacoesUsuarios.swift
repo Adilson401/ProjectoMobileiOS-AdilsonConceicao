@@ -11,6 +11,7 @@ import SwiftData
 struct MarcacoesUsuarios: View {
     // Contexto usado para guardar as especialidades localmente.
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
 
     // Usuario autenticado usado para filtrar a agenda medica.
     @Query(sort: \UsuarioModel.dataLogin, order: .reverse) private var usuarios: [UsuarioModel]
@@ -107,7 +108,7 @@ struct MarcacoesUsuarios: View {
 
                 Spacer()
 
-                Text("Passo \(passoAtual) de \(totalPassos)")
+                Text("\(t("Passo")) \(passoAtual) \(t("de")) \(totalPassos)")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color(red: 0.39, green: 0.45, blue: 0.54))
             }
@@ -135,7 +136,7 @@ struct MarcacoesUsuarios: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: "arrow.left")
-                Text("Voltar")
+                Text(t("Voltar"))
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(Color(red: 0.47, green: 0.54, blue: 0.64))
@@ -146,12 +147,12 @@ struct MarcacoesUsuarios: View {
     // Titulo principal do passo actual.
     private var titleArea: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(tituloPassoAtual)
+            Text(t(tituloPassoAtual))
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(TemaStyles.titleColor)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(subtituloPassoAtual)
+            Text(t(subtituloPassoAtual))
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -355,11 +356,11 @@ struct MarcacoesUsuarios: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Sem agenda disponivel")
+                Text(t("Sem agenda disponivel"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
 
-                Text("Nao encontramos medicos para esta especialidade agora.")
+                Text(t("Nao encontramos medicos para esta especialidade agora."))
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -488,7 +489,7 @@ struct MarcacoesUsuarios: View {
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
 
-                    Text("Horarios em \(dataSelecionadaTexto(dataSelecionada))")
+                    Text("\(t("Horarios em")) \(dataSelecionadaTexto(dataSelecionada))")
                         .font(.headline.weight(.bold))
                         .foregroundStyle(TemaStyles.titleColor)
                 }
@@ -631,11 +632,11 @@ struct MarcacoesUsuarios: View {
                         .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
                 }
 
-                Text("Consulta Agendada!")
+                Text(t("Consulta Agendada!"))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(TemaStyles.titleColor)
 
-                Text("Seu agendamento foi realizado com sucesso")
+                Text(t("Seu agendamento foi realizado com sucesso"))
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -686,7 +687,7 @@ struct MarcacoesUsuarios: View {
                     Image(systemName: "qrcode")
                         .font(.headline.weight(.semibold))
 
-                    Text("Código de Confirmação")
+                    Text(t("Código de Confirmação"))
                         .font(.headline.weight(.bold))
                 }
                 .foregroundStyle(Color(red: 0.56, green: 0.62, blue: 0.70))
@@ -699,7 +700,7 @@ struct MarcacoesUsuarios: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
-                    Text("Apresente este código na recepção")
+                    Text(t("Apresente este código na recepção"))
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color(red: 0.56, green: 0.62, blue: 0.70))
                 }
@@ -759,7 +760,7 @@ struct MarcacoesUsuarios: View {
             Button {
                 onVerConsultas?()
             } label: {
-                Text("Ver Consultas")
+                Text(t("Ver Consultas"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -773,7 +774,7 @@ struct MarcacoesUsuarios: View {
             Button {
                 onVoltarInicio?()
             } label: {
-                Text("Voltar ao Início")
+                Text(t("Voltar ao Início"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
                     .frame(maxWidth: .infinity)
@@ -797,7 +798,7 @@ struct MarcacoesUsuarios: View {
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(Color(red: 0.47, green: 0.54, blue: 0.64))
 
-                Text("Observações (opcional)")
+                Text(t("Observações (opcional)"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
             }
@@ -816,7 +817,7 @@ struct MarcacoesUsuarios: View {
                             .stroke(Color(red: 0.00, green: 0.67, blue: 0.67).opacity(0.65), lineWidth: 1.4)
 
                         if observacoesMarcacao.isEmpty {
-                            Text("Descreva sintomas ou informações\nrelevantes...")
+                            Text(t("Descreva sintomas ou informações\nrelevantes..."))
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(Color(red: 0.63, green: 0.69, blue: 0.76))
                                 .padding(.horizontal, 18)
@@ -879,7 +880,7 @@ struct MarcacoesUsuarios: View {
                 if enviandoMarcacao {
                     ProgressView()
                         .tint(.white)
-                    Text("A confirmar...")
+                    Text(t("A confirmar..."))
                 } else {
                     Text(tituloBotaoContinuar)
                     Image(systemName: passoAtual == 4 ? "checkmark" : "chevron.right")
@@ -903,7 +904,7 @@ struct MarcacoesUsuarios: View {
             iniciarNovoAgendamento()
         } label: {
             HStack(spacing: 12) {
-                Text("Novo Agendamento")
+                Text(t("Novo Agendamento"))
                 Image(systemName: "calendar.badge.plus")
             }
             .font(.headline.weight(.bold))
@@ -1543,6 +1544,10 @@ struct MarcacoesUsuarios: View {
 
     private var usuarioLocal: UsuarioModel? {
         usuarios.first
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

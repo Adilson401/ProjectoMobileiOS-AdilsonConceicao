@@ -11,6 +11,7 @@ import SwiftData
 struct MainPrincipalView: View {
     // Lemos o ultimo usuario guardado depois do login.
     @Query(sort: \UsuarioModel.dataLogin, order: .reverse) private var usuarios: [UsuarioModel]
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
 
     // Controla o item activo na barra de baixo.
     @State private var tabSelecionada: PainelTab = .inicio
@@ -155,7 +156,7 @@ struct MainPrincipalView: View {
     private var consultasHojeSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("Consultas de Hoje")
+                Text(t("Consultas de Hoje"))
                     .font(.title3.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
 
@@ -165,7 +166,7 @@ struct MainPrincipalView: View {
                     tabSelecionada = .consultas
                 } label: {
                     HStack(spacing: 5) {
-                        Text("Ver todas")
+                        Text(t("Ver todas"))
                         Image(systemName: "chevron.right")
                     }
                     .font(.subheadline.weight(.bold))
@@ -202,11 +203,11 @@ struct MainPrincipalView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TemaStyles.cornerRadius, style: .continuous))
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("A carregar consultas")
+                Text(t("A carregar consultas"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
 
-                Text("Estamos a buscar a consulta agendada.")
+                Text(t("Estamos a buscar a consulta agendada."))
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -228,11 +229,11 @@ struct MainPrincipalView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TemaStyles.cornerRadius, style: .continuous))
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Nao foi possivel carregar")
+                Text(t("Nao foi possivel carregar"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
 
-                Text(mensagem)
+                Text(t(mensagem))
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -314,7 +315,7 @@ struct MainPrincipalView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TemaStyles.cornerRadius, style: .continuous))
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Sem consulta agendada para hoje")
+                Text(t("Sem consulta agendada para hoje"))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(TemaStyles.titleColor)
                     .fixedSize(horizontal: false, vertical: true)
@@ -378,11 +379,11 @@ struct MainPrincipalView: View {
                     .clipShape(RoundedRectangle(cornerRadius: TemaStyles.cornerRadius, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(title)
+                    Text(t(title))
                         .font(.headline.weight(.bold))
                         .foregroundStyle(TemaStyles.titleColor)
 
-                    Text(subtitle)
+                    Text(t(subtitle))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
@@ -423,13 +424,13 @@ struct MainPrincipalView: View {
                 Spacer(minLength: 0)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
+                    Text(t(title))
                         .font(.headline.weight(.bold))
                         .foregroundStyle(TemaStyles.titleColor)
                         .lineLimit(2)
                         .minimumScaleFactor(0.82)
 
-                    Text(subtitle)
+                    Text(t(subtitle))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -479,7 +480,7 @@ struct MainPrincipalView: View {
     // Nome usado no card principal.
     private var nomeUsuario: String {
         guard let usuario = usuarios.first else {
-            return "Paciente Famor"
+            return t("Paciente Famor")
         }
 
         if usuario.nome.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
@@ -490,7 +491,7 @@ struct MainPrincipalView: View {
             return String(nomeEmail)
         }
 
-        return "Paciente Famor"
+        return t("Paciente Famor")
     }
 
     // Saudacao conforme a hora do dia.
@@ -498,12 +499,12 @@ struct MainPrincipalView: View {
         let hora = Calendar.current.component(.hour, from: Date())
 
         if hora < 12 {
-            return "Bom dia,"
+            return t("Bom dia,")
         } else if hora < 18 {
-            return "Boa tarde,"
+            return t("Boa tarde,")
         }
 
-        return "Boa noite,"
+        return t("Boa noite,")
     }
 
     // Id usado para recarregar as consultas quando mudar o usuario.
@@ -514,7 +515,7 @@ struct MainPrincipalView: View {
     // Texto usado quando nao existe consulta marcada para hoje.
     private var textoConsultaVazia: String {
         guard let ultimaMarcacao, ultimaMarcacao.eHoje == false, ultimaMarcacao.dataConsulta != nil else {
-            return "Quando tiver consulta hoje, ela aparece aqui."
+            return t("Quando tiver consulta hoje, ela aparece aqui.")
         }
 
         return "A próxima consulta está marcada para \(formatarData(ultimaMarcacao.dataConsulta)) às \(horaMarcacao(ultimaMarcacao))."
@@ -593,6 +594,10 @@ struct MainPrincipalView: View {
 
         return Color(red: red, green: green, blue: blue)
     }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
+    }
 }
 
 // Estilo dos cards pequenos do painel.
@@ -630,17 +635,17 @@ private enum PainelTab: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .inicio:
-            return "Inicio"
+                    return L10n.tr("Inicio")
         case .agendar:
-            return "Agendar"
+            return L10n.tr("Agendar")
         case .consultas:
-            return "Consultas"
+            return L10n.tr("Consultas")
         case .especialidades:
-            return "Especialidades"
+            return L10n.tr("Especialidades")
         case .avisos:
-            return "Avisos"
+            return L10n.tr("Avisos")
         case .perfil:
-            return "Perfil"
+            return L10n.tr("Perfil")
         }
     }
 

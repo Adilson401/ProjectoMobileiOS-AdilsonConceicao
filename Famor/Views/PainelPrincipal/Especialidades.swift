@@ -11,6 +11,7 @@ import SwiftData
 // Tela que mostra as especialidades da clínica.
 struct Especialidades: View {
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
 
     // Chama o fluxo de marcação quando o paciente escolhe uma área.
     var onAgendar: (() -> Void)? = nil
@@ -73,12 +74,12 @@ struct Especialidades: View {
     private var titleArea: some View {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Especialidades")
+                Text(t("Especialidades"))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(TemaStyles.titleColor)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Escolha uma area para marcar consulta")
+                Text(t("Escolha uma area para marcar consulta"))
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -167,7 +168,7 @@ struct Especialidades: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.82)
 
-                    Text("Ver agenda")
+                    Text(t("Ver agenda"))
                         .font(.caption.weight(.bold))
                         .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
                 }
@@ -191,7 +192,7 @@ struct Especialidades: View {
             ProgressView()
                 .tint(Color(red: 0.00, green: 0.67, blue: 0.67))
 
-            Text("A carregar especialidades...")
+            Text(t("A carregar especialidades..."))
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.secondary)
         }
@@ -230,7 +231,7 @@ struct Especialidades: View {
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(Color(red: 0.00, green: 0.67, blue: 0.67))
 
-            Text("A mostrar especialidades guardadas no telemovel.")
+            Text(t("A mostrar especialidades guardadas no telemovel."))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color(red: 0.39, green: 0.45, blue: 0.54))
                 .fixedSize(horizontal: false, vertical: true)
@@ -255,11 +256,11 @@ struct Especialidades: View {
                 .background(Color(red: 0.88, green: 0.98, blue: 0.97))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-            Text("Sem especialidades")
+            Text(t("Sem especialidades"))
                 .font(.headline.weight(.bold))
                 .foregroundStyle(TemaStyles.titleColor)
 
-            Text("Nao encontramos especialidades disponiveis agora.")
+            Text(t("Nao encontramos especialidades disponiveis agora."))
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -370,6 +371,10 @@ struct Especialidades: View {
             .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "pt_AO"))
             .lowercased()
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

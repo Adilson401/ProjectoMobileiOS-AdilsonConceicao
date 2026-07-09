@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RegistarUsuarios: View {
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
+
     // Usado para voltar para a tela de login.
     var onBack: (() -> Void)? = nil
 
@@ -127,12 +129,12 @@ struct RegistarUsuarios: View {
     private var confirmacaoCard: some View {
         VStack(spacing: 24) {
             VStack(spacing: 8) {
-                Text("Verifique o seu e-mail")
+                Text(t("Verifique o seu e-mail"))
                     .font(.system(size: TemaStyles.titleSize, weight: .bold, design: .rounded))
                     .foregroundStyle(TemaStyles.titleColor)
                     .multilineTextAlignment(.center)
 
-                Text("Escreva o codigo recebido em \(email.trimmingCharacters(in: .whitespacesAndNewlines)).")
+                Text("\(t("Escreva o codigo recebido em")) \(email.trimmingCharacters(in: .whitespacesAndNewlines)).")
                     .font(.body.weight(.medium))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -177,7 +179,7 @@ struct RegistarUsuarios: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "arrow.left")
-                Text("Voltar")
+                Text(t("Voltar"))
             }
             .font(.footnote.weight(.semibold))
             .foregroundStyle(TemaStyles.primaryColor)
@@ -188,13 +190,13 @@ struct RegistarUsuarios: View {
     // Titulo e texto curto da tela.
     private var headerTexts: some View {
         VStack(spacing: 8) {
-            Text("Cadastro Centro\nMédico Famor")
+            Text(t("Cadastro Centro\nMédico Famor"))
                 .font(.system(size: TemaStyles.titleSize, weight: .bold, design: .rounded))
                 .foregroundStyle(TemaStyles.titleColor)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
 
-            Text("Preencha seus dados para criar uma conta.")
+            Text(t("Preencha seus dados para criar uma conta."))
                 .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -205,8 +207,8 @@ struct RegistarUsuarios: View {
     // Campo do nome completo.
     private var nomeField: some View {
         campoTexto(
-            titulo: "Nome",
-            placeholder: "Digite seu nome",
+            titulo: t("Nome"),
+            placeholder: t("Digite seu nome"),
             text: $nome,
             focus: .nome,
             keyboard: .default,
@@ -219,8 +221,8 @@ struct RegistarUsuarios: View {
     // Campo da morada do utilizador.
     private var moradaField: some View {
         campoTexto(
-            titulo: "Morada",
-            placeholder: "Digite sua morada",
+            titulo: t("Morada"),
+            placeholder: t("Digite sua morada"),
             text: $morada,
             focus: .morada,
             keyboard: .default,
@@ -233,8 +235,8 @@ struct RegistarUsuarios: View {
     // Campo do e-mail.
     private var emailField: some View {
         campoTexto(
-            titulo: "E-mail",
-            placeholder: "Digite seu e-mail",
+            titulo: t("E-mail"),
+            placeholder: t("Digite seu e-mail"),
             text: $email,
             focus: .email,
             keyboard: .emailAddress,
@@ -248,7 +250,7 @@ struct RegistarUsuarios: View {
     // Campo da data no formato pedido pela API.
     private var dataNascimentoField: some View {
         campoTexto(
-            titulo: "Data de Nascimento",
+            titulo: t("Data de Nascimento"),
             placeholder: "YYYY-MM-DD",
             text: $dataNascimento,
             focus: .dataNascimento,
@@ -262,15 +264,15 @@ struct RegistarUsuarios: View {
     // Campo da senha com opcao de mostrar.
     private var senhaField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            fieldLabel("Senha")
+            fieldLabel(t("Senha"))
 
             inputContainer(isFocused: campoAtivo == .senha) {
                 HStack(spacing: 12) {
                     Group {
                         if mostrarSenha {
-                            TextField("Digite sua senha", text: $senha)
+                            TextField(t("Digite sua senha"), text: $senha)
                         } else {
-                            SecureField("Digite sua senha", text: $senha)
+                            SecureField(t("Digite sua senha"), text: $senha)
                         }
                     }
                     .textContentType(.newPassword)
@@ -283,7 +285,7 @@ struct RegistarUsuarios: View {
                     Button {
                         mostrarSenha.toggle()
                     } label: {
-                        Text(mostrarSenha ? "Ocultar" : "Mostrar")
+                        Text(mostrarSenha ? t("Ocultar") : t("Mostrar"))
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(TemaStyles.primaryColor)
                     }
@@ -296,7 +298,7 @@ struct RegistarUsuarios: View {
     // Campo do codigo enviado por e-mail.
     private var codigoField: some View {
         inputContainer(isFocused: campoAtivo == .codigo) {
-            TextField("Digite o codigo", text: $codigoConfirmacao)
+            TextField(t("Digite o codigo"), text: $codigoConfirmacao)
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.center)
                 .textInputAutocapitalization(.never)
@@ -319,7 +321,7 @@ struct RegistarUsuarios: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Cadastrar")
+                    Text(t("Cadastrar"))
                     Image(systemName: "arrow.right")
                 }
             }
@@ -340,7 +342,7 @@ struct RegistarUsuarios: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Verificar")
+                    Text(t("Verificar"))
                 }
             }
             .primaryButtonSurface()
@@ -356,7 +358,7 @@ struct RegistarUsuarios: View {
             reenviarCodigo()
         } label: {
             HStack(spacing: 8) {
-                Text("Reenviar código")
+                Text(t("Reenviar código"))
                 Image(systemName: "arrow.clockwise")
             }
             .secondaryButtonSurface()
@@ -370,7 +372,7 @@ struct RegistarUsuarios: View {
         Button {
             onBack?()
         } label: {
-            Text("Cancelar")
+            Text(t("Cancelar"))
                 .secondaryButtonSurface()
         }
         .buttonStyle(.plain)
@@ -521,6 +523,10 @@ struct RegistarUsuarios: View {
     // Pede outro codigo usando os mesmos dados do cadastro.
     private func reenviarCodigo() {
         cadastrarUsuario()
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

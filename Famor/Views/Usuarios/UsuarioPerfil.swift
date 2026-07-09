@@ -11,6 +11,7 @@ import SwiftData
 struct UsuarioPerfil: View {
     // Contexto usado para limpar a sessao local.
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
 
     // Usuario guardado localmente depois do login.
     @Query(sort: \UsuarioModel.dataLogin, order: .reverse) private var usuarios: [UsuarioModel]
@@ -77,7 +78,7 @@ struct UsuarioPerfil: View {
             ProgressView()
                 .tint(TemaStyles.primaryColor)
 
-            Text(mensagemLoading)
+            Text(t(mensagemLoading))
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(TemaStyles.titleColor.opacity(0.76))
                 .multilineTextAlignment(.center)
@@ -141,25 +142,25 @@ struct UsuarioPerfil: View {
     // Cards com totais das consultas.
     private var statsGrid: some View {
         HStack(spacing: 12) {
-            statCard(value: totais.totalConsultas, title: "Total", color: TemaStyles.titleColor)
-            statCard(value: totais.concluidas, title: "Concluidas", color: Color(red: 0.00, green: 0.64, blue: 0.50))
-            statCard(value: totais.canceladas, title: "Canceladas", color: Color(red: 0.90, green: 0.08, blue: 0.22))
+            statCard(value: totais.totalConsultas, title: t("Total"), color: TemaStyles.titleColor)
+            statCard(value: totais.concluidas, title: t("Concluidas"), color: Color(red: 0.00, green: 0.64, blue: 0.50))
+            statCard(value: totais.canceladas, title: t("Canceladas"), color: Color(red: 0.90, green: 0.08, blue: 0.22))
         }
     }
 
     // Card com informacoes do usuario.
     private var infoCard: some View {
         VStack(alignment: .leading, spacing: 22) {
-            Text("Informações")
+            Text(t("Informações"))
                 .font(.headline.weight(.bold))
                 .foregroundStyle(TemaStyles.titleColor)
 
             VStack(spacing: 18) {
-                infoRow(icon: "person", label: "Nome", value: nomePerfil)
+                infoRow(icon: "person", label: t("Nome"), value: nomePerfil)
                 infoRow(icon: "envelope", label: "Email", value: emailPerfil)
-                infoRow(icon: "mappin", label: "Morada", value: moradaPerfil)
-                infoRow(icon: "briefcase", label: "Função", value: funcaoPerfil)
-                infoRow(icon: "calendar", label: "Data de registo", value: dataRegistoTexto)
+                infoRow(icon: "mappin", label: t("Morada"), value: moradaPerfil)
+                infoRow(icon: "briefcase", label: t("Função"), value: funcaoPerfil)
+                infoRow(icon: "calendar", label: t("Data de registo"), value: dataRegistoTexto)
             }
         }
         .padding(22)
@@ -180,7 +181,7 @@ struct UsuarioPerfil: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "rectangle.portrait.and.arrow.right")
-                Text("Terminar Sessao")
+                Text(t("Terminar Sessao"))
             }
             .font(.headline.weight(.bold))
             .foregroundStyle(Color(red: 0.84, green: 0.22, blue: 0.26))
@@ -251,7 +252,7 @@ struct UsuarioPerfil: View {
             Image(systemName: isError ? "exclamationmark.circle.fill" : "wifi.slash")
                 .font(.footnote.weight(.semibold))
 
-            Text(text)
+            Text(t(text))
                 .font(.footnote.weight(.medium))
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -367,32 +368,33 @@ struct UsuarioPerfil: View {
     }
 
     private var nomePerfil: String {
-        textoValido(perfil?.nome) ?? textoValido(usuarioLocal?.nome) ?? "Paciente Famor"
+        textoValido(perfil?.nome) ?? textoValido(usuarioLocal?.nome) ?? t("Paciente Famor")
     }
 
     private var emailPerfil: String {
-        textoValido(perfil?.email) ?? textoValido(usuarioLocal?.email) ?? "email nao informado"
+        textoValido(perfil?.email) ?? textoValido(usuarioLocal?.email) ?? t("email nao informado")
     }
 
     private var moradaPerfil: String {
-        textoValido(perfil?.morada) ?? "Nao informado"
+        textoValido(perfil?.morada) ?? t("Nao informado")
     }
 
     private var funcaoPerfil: String {
         textoValido(perfil?.funcao)
             ?? textoValido(perfil?.perfil)
             ?? textoValido(usuarioLocal?.perfil)
-            ?? "Pacientes"
+            ?? t("Pacientes")
     }
 
     private var dataRegistoTexto: String {
         guard let data = perfil?.dataRegisto ?? usuarioLocal?.dataLogin else {
-            return "Nao informado"
+            return t("Nao informado")
         }
 
+        let language = AppLanguage(rawValue: languageCode) ?? .portuguese
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "pt_PT")
-        formatter.dateFormat = "dd 'de' MMMM 'de' yyyy"
+        formatter.locale = Locale(identifier: language.localeIdentifier)
+        formatter.dateFormat = language == .english ? "MMM dd, yyyy" : "dd 'de' MMMM 'de' yyyy"
         return formatter.string(from: data)
     }
 
@@ -400,6 +402,10 @@ struct UsuarioPerfil: View {
         guard let texto else { return nil }
         let limpo = texto.trimmingCharacters(in: .whitespacesAndNewlines)
         return limpo.isEmpty ? nil : limpo
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 

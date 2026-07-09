@@ -11,6 +11,7 @@ import SwiftData
 struct TelaLoginView: View {
     // Contexto usado para guardar o usuario no SwiftData.
     @Environment(\.modelContext) private var modelContext
+    @AppStorage(ApiConstants.languageKey) private var languageCode = AppLanguage.portuguese.rawValue
 
     // Quando o login falhar, a splash pode ser chamada de novo.
     var onLoginFailure: (() -> Void)? = nil
@@ -94,21 +95,17 @@ struct TelaLoginView: View {
     // A estrutura de todo o formulário.
     private var loginCard: some View {
         VStack(spacing: 28) {
-            // Logo da aplicação.
-            Image("famorIcon")
-                .resizable()
-                .scaledToFit()
-                .frame(width: TemaStyles.logoWidth, height: TemaStyles.logoHeight)
+            loginHeader
 
             // Texto principal de boas-vindas.
             VStack(spacing: 6) {
-                Text("Bem-vindo ao Centro\nMédico Famor")
+                Text(t("Bem-vindo ao Centro\nMédico Famor"))
                     .font(.system(size: TemaStyles.titleSize, weight: .bold, design: .rounded))
                     .foregroundStyle(titleColor)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
 
-                Text("Digite seus dados da conta")
+                Text(t("Digite seus dados da conta"))
                     .font(.body.weight(.medium))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -142,10 +139,58 @@ struct TelaLoginView: View {
         .shadow(color: primaryColor.opacity(0.12), radius: 0, x: 0, y: 8)
     }
 
+    // Logotipo com troca rapida de idioma no canto.
+    private var loginHeader: some View {
+        ZStack(alignment: .topTrailing) {
+            Image("famorIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: TemaStyles.logoWidth, height: TemaStyles.logoHeight)
+                .frame(maxWidth: .infinity)
+
+            languageSelector
+                .padding(.top, 2)
+        }
+    }
+
+    // Escolha de idioma leve, so com siglas.
+    private var languageSelector: some View {
+        HStack(spacing: 6) {
+            languageButton(.portuguese)
+
+            Text("|")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary.opacity(0.55))
+
+            languageButton(.english)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(.thinMaterial)
+        .clipShape(Capsule())
+        .accessibilityLabel(t("Idioma"))
+    }
+
+    private func languageButton(_ language: AppLanguage) -> some View {
+        let selected = languageCode == language.rawValue
+
+        return Button {
+            withAnimation(.easeInOut(duration: 0.18)) {
+                languageCode = language.rawValue
+            }
+        } label: {
+            Text(language.shortTitle)
+                .font(.caption.weight(selected ? .black : .semibold))
+                .foregroundStyle(selected ? primaryColor : .secondary)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
     // Espaço para escrever o e-mail.
     private var emailField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            fieldLabel("E-mail")
+            fieldLabel(t("E-mail"))
 
             inputContainer(isFocused: campoAtivo == .email) {
                 HStack(spacing: 12) {
@@ -155,7 +200,7 @@ struct TelaLoginView: View {
                         .foregroundStyle(campoAtivo == .email ? primaryColor : .secondary)
                         .frame(width: 22)
 
-                    TextField("Digite seu e-mail", text: $usuario)
+                    TextField(t("Digite seu e-mail"), text: $usuario)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -174,7 +219,7 @@ struct TelaLoginView: View {
     // Espaço para escrever a senha e escolher se quer ver ou esconder.
     private var passwordField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            fieldLabel("Senha")
+            fieldLabel(t("Senha"))
 
             inputContainer(isFocused: campoAtivo == .senha) {
                 HStack(spacing: 12) {
@@ -186,9 +231,9 @@ struct TelaLoginView: View {
 
                     Group {
                         if mostrarSenha {
-                            TextField("Digite sua senha", text: $senha)
+                            TextField(t("Digite sua senha"), text: $senha)
                         } else {
-                            SecureField("Digite sua senha", text: $senha)
+                            SecureField(t("Digite sua senha"), text: $senha)
                         }
                     }
                     .textContentType(.password)
@@ -202,7 +247,7 @@ struct TelaLoginView: View {
                     Button {
                         mostrarSenha.toggle()
                     } label: {
-                        Text(mostrarSenha ? "Ocultar" : "Mostrar")
+                        Text(t(mostrarSenha ? "Ocultar" : "Mostrar"))
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(primaryColor)
                     }
@@ -224,7 +269,7 @@ struct TelaLoginView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(lembrarMe ? primaryColor : .secondary)
 
-                    Text("Lembrar-me")
+                    Text(t("Lembrar-me"))
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(.secondary)
                 }
@@ -233,7 +278,7 @@ struct TelaLoginView: View {
 
             Spacer(minLength: 12)
 
-            Button("Esqueceu a senha?") {
+            Button(t("Esqueceu a senha?")) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     mostrarRecuperarSenha = true
                 }
@@ -255,7 +300,7 @@ struct TelaLoginView: View {
                         .tint(.white)
                 } else {
                     Image(systemName: "arrow.right.circle.fill")
-                    Text("Entrar")
+                    Text(loading ? t("A entrar...") : t("Entrar"))
                 }
             }
             .font(.headline.weight(.semibold))
@@ -283,10 +328,10 @@ struct TelaLoginView: View {
     // botao para criar uma conta nova.
     private var registerLink: some View {
         HStack(spacing: 5) {
-            Text("Ainda não tem conta?")
+            Text(t("Ainda não tem conta?"))
                 .foregroundStyle(.secondary)
 
-            Button("Novo registo") {
+            Button(t("Criar conta")) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     mostrarRegistarUsuario = true
                 }
@@ -372,6 +417,10 @@ struct TelaLoginView: View {
                 }
             }
         }
+    }
+
+    private func t(_ text: String) -> String {
+        L10n.tr(text, languageCode: languageCode)
     }
 }
 
